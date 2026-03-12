@@ -56,5 +56,5 @@ int main(){
     if(!gestion_exit(argvs))
         break;
     execute(argvs);
-
+    }
 }
