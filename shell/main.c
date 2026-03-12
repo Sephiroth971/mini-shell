@@ -6,9 +6,8 @@
 char **tokenize(char *line, char **argvs){
     char *token = strtok(line," \t");
     int i=0;
-    while(token != NULL){
-        argvs[i] = token;
-        i++;
+    while(token){
+        argvs[i++] = token;
         token = strtok(NULL," \t");
     }
     argvs[i] =NULL;
