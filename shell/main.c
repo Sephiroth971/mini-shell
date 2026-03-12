@@ -35,11 +35,26 @@ void execute(char **argvs){
         perror("fork");
     }
 }
+int gestion_exit(char **argvs){
+    if(argvs[0] == NULL ){
+        printf("%s","exit mini-shell");
+        return 1;
+    }
+    else if (strcmp(argvs[0],"exit") == 0){
+        return 0;
+    }
+    return 1;
+}
+
 int main(){
+    while(1){
     char line[256];
     char *argvs[20];
-    printf("shell>>");
+    printf("Mini-shell>>");
     read_line(line);
     tokenize(line,argvs);
+    if(!gestion_exit(argvs))
+        break;
     execute(argvs);
+    }
 }
