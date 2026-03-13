@@ -2,6 +2,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#define MAX_HISTORY 100
+
+char history[MAX_HISTORY][256];
+int history_count=0;
+
 
 char **tokenize(char *line, char **argvs){
     char *token = strtok(line," \t");
@@ -55,6 +60,12 @@ int main(){
     getcwd(cwd, sizeof(cwd));
     printf("%s >>",cwd);
     read_line(line);
+
+    if(strlen(line) > 0){
+        strcpy(history[history_count % MAX_HISTORY], line); // ajout de la cmd a l'historique 
+        history_count++;
+    }
+
     tokenize(line,argvs);
 
     if(!gestion_exit(argvs))
@@ -68,7 +79,15 @@ int main(){
             continue;
         }
     }
+    if(strcmp(argvs[0],"history") == 0){ // lecture de l'historique 
+        int start = 0;
+        if(history_count > MAX_HISTORY)
+            start = history_count - MAX_HISTORY;
+        for (int i=start; i < history_count; i++){
+            printf("%d %s\n", i+1, history[i % MAX_HISTORY]);
+        }
+        continue;
+    }
     execute(argvs);
-
     }
 }
