@@ -8,7 +8,7 @@ char history[MAX_HISTORY][256];
 int history_count=0;
 
 
-char **tokenize(char *line, char **argvs){
+char **tokenize(char *line, char **argvs){ // tokenization
     char *token = strtok(line," \t");
     int i=0;
     while(token){
@@ -18,14 +18,16 @@ char **tokenize(char *line, char **argvs){
     argvs[i] =NULL;
     return argvs;
 }
-void read_line(char *line){
+
+void read_line(char *line){ // readline
     fgets(line,256,stdin);
     size_t len = strlen(line);
     if (line[len - 1]=='\n'){
         line[len - 1]='\0';
     }
 }
-void execute(char **argvs){
+
+void execute(char **argvs){ // execute cmd exep : cd 
     pid_t pid = fork();
 
     if (pid == 0){ // child process
@@ -40,7 +42,16 @@ void execute(char **argvs){
         perror("fork");
     }
 }
-int gestion_exit(char **argvs){
+void cd_execute(char **argvs){
+    if(argvs[1] == NULL){
+        printf("cd : missing argument\n");
+    }
+    else {
+        chdir(argvs[1]);
+    }
+
+}
+int gestion_exit(char **argvs){ // cmd to quit shell
     if(argvs[0] == NULL ){
         printf("%s","exit mini-shell");
         return 1;
@@ -68,18 +79,14 @@ int main(){
 
     tokenize(line,argvs);
 
-    if(!gestion_exit(argvs))
+    if(!gestion_exit(argvs)) 
         break;
-    if(strcmp(argvs[0],"cd") == 0){
-        if(argvs[1] == NULL){
-            printf("cd : missing argument\n");
-        }
-        else {
-            chdir(argvs[1]);
-            continue;
-        }
+    if (strcmp(argvs[0],"cd") == 0){
+        cd_execute(argvs);
+        continue;
     }
-    if(strcmp(argvs[0],"history") == 0){ // lecture de l'historique 
+
+    if(strcmp(argvs[0],"history") == 0){ // lecture and print de l'historique 
         int start = 0;
         if(history_count > MAX_HISTORY)
             start = history_count - MAX_HISTORY;
@@ -88,6 +95,7 @@ int main(){
         }
         continue;
     }
+
     execute(argvs);
     }
 }
