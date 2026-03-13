@@ -45,16 +45,25 @@ int gestion_exit(char **argvs){
     }
     return 1;
 }
+char *getcwd(char *buf, size_t size);
 
 int main(){
     while(1){
+    char cwd[1024];
     char line[256];
     char *argvs[20];
-    printf("Mini-shell>>");
+    getcwd(cwd, sizeof(cwd));
+    printf("%s >>",cwd);
     read_line(line);
     tokenize(line,argvs);
+
     if(!gestion_exit(argvs))
         break;
+    if(strcmp(argvs[0],"cd") == 0){
+    chdir(argvs[1]);
+    continue;
+    }
     execute(argvs);
+
     }
 }
