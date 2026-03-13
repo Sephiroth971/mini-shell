@@ -7,6 +7,7 @@
 char history[MAX_HISTORY][256];
 int history_count=0;
 
+char *getcwd(char *buf, size_t size);
 
 char **tokenize(char *line, char **argvs){ // tokenization
     char *token = strtok(line," \t");
@@ -27,6 +28,15 @@ void read_line(char *line){ // readline
     }
 }
 
+void read_history(){ // read history
+        int start = 0;
+        if(history_count > MAX_HISTORY)
+            start = history_count - MAX_HISTORY;
+        for (int i=start; i < history_count; i++){
+            printf("%d %s\n", i+1, history[i % MAX_HISTORY]);
+        }
+}
+
 void execute(char **argvs){ // execute cmd exep : cd 
     pid_t pid = fork();
 
@@ -42,7 +52,8 @@ void execute(char **argvs){ // execute cmd exep : cd
         perror("fork");
     }
 }
-void cd_execute(char **argvs){
+
+void cd_execute(char **argvs){ // execute la cmd cd 
     if(argvs[1] == NULL){
         printf("cd : missing argument\n");
     }
@@ -51,7 +62,8 @@ void cd_execute(char **argvs){
     }
 
 }
-int gestion_exit(char **argvs){ // cmd to quit shell
+
+int cmd_exit(char **argvs){ // cmd to quit shell
     if(argvs[0] == NULL ){
         printf("%s","exit mini-shell");
         return 1;
@@ -61,7 +73,7 @@ int gestion_exit(char **argvs){ // cmd to quit shell
     }
     return 1;
 }
-char *getcwd(char *buf, size_t size);
+
 
 int main(){
     while(1){
@@ -79,20 +91,16 @@ int main(){
 
     tokenize(line,argvs);
 
-    if(!gestion_exit(argvs)) 
+    if(!cmd_exit(argvs)) 
         break;
+
     if (strcmp(argvs[0],"cd") == 0){
         cd_execute(argvs);
         continue;
     }
 
-    if(strcmp(argvs[0],"history") == 0){ // lecture and print de l'historique 
-        int start = 0;
-        if(history_count > MAX_HISTORY)
-            start = history_count - MAX_HISTORY;
-        for (int i=start; i < history_count; i++){
-            printf("%d %s\n", i+1, history[i % MAX_HISTORY]);
-        }
+    if(strcmp(argvs[0],"history") == 0){ // read history 
+        read_history();
         continue;
     }
 
