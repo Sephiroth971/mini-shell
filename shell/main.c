@@ -60,8 +60,13 @@ int main(){
     if(!gestion_exit(argvs))
         break;
     if(strcmp(argvs[0],"cd") == 0){
-    chdir(argvs[1]);
-    continue;
+        if(argvs[1] == NULL){
+            printf("cd : missing argument\n");
+        }
+        else {
+            chdir(argvs[1]);
+            continue;
+        }
     }
     execute(argvs);
 
